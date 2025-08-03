@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!-- saved from url=(0075)file:///C:/Users/DELL/OneDrive/Desktop/industrial/invoice.html/invoice.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Invoice Generator</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 800px; margin: auto; }
+    input, select { width: 100%; padding: 8px; margin: 4px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .btn { padding: 8px 16px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+<h2>Tax Invoice Form</h2>
+
+<form id="invoiceForm">
+  <label>Invoice No:</label>
+  <input type="text" id="invoiceNo" required="">
+
+  <label>Date:</label>
+  <input type="date" id="invoiceDate" required="">
+
+  <label>Customer Name:</label>
+  <input type="text" id="customerName">
+
+  <label>Customer Address:</label>
+  <input type="text" id="customerAddress">
+
+  <h3>Item Details</h3>
+  <table id="itemsTable">
+    <thead>
+      <tr><th>Description</th><th>Qty</th><th>Rate</th><th>Subtotal</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" class="desc"></td>
+        <td><input type="number" class="qty" oninput="updateTotals()"></td>
+        <td><input type="number" class="rate" oninput="updateTotals()"></td>
+        <td class="subtotal">7.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button type="button" class="btn" onclick="addRow()">+ Add Item</button>
+
+  <label>Total: ₹ <span id="total">7.00</span></label><br>
+  <label>CGST (6%): ₹ <span id="cgst">0.42</span></label><br>
+  <label>SGST (6%): ₹ <span id="sgst">0.42</span></label><br>
+  <label><b>Grand Total: ₹ <span id="grandTotal">7.84</span></b></label><br>
+
+  <button type="submit" class="btn">Preview Invoice</button>
+</form>
+
+<script>
+function addRow() {
+  const table = document.querySelector("#itemsTable tbody");
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><input type="text" class="desc"></td>
+    <td><input type="number" class="qty" oninput="updateTotals()"></td>
+    <td><input type="number" class="rate" oninput="updateTotals()"></td>
+    <td class="subtotal">0</td>`;
+  table.appendChild(row);
+}
+
+function updateTotals() {
+  let total = 0;
+  const rows = document.querySelectorAll("#itemsTable tbody tr");
+  rows.forEach(row => {
+    const qty = parseFloat(row.querySelector(".qty").value) || 0;
+    const rate = parseFloat(row.querySelector(".rate").value) || 0;
+    const subtotal = qty * rate;
+    row.querySelector(".subtotal").textContent = subtotal.toFixed(2);
+    total += subtotal;
+  });
+
+  const cgst = total * 0.06;
+  const sgst = total * 0.06;
+  const grand = total + cgst + sgst;
+
+  document.getElementById("total").textContent = total.toFixed(2);
+  document.getElementById("cgst").textContent = cgst.toFixed(2);
+  document.getElementById("sgst").textContent = sgst.toFixed(2);
+  document.getElementById("grandTotal").textContent = grand.toFixed(2);
+}
+
+document.getElementById("invoiceForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  alert("Invoice Preview feature can be added (or print/download PDF).");
+});
+</script>
+
+
+
+</body></html>
